@@ -80,6 +80,8 @@ class FootStateBroadcaster : public controller_interface::ControllerInterface {
   std::shared_ptr<ParamListener> param_listener_;
   Params params_;
 
+  spot_msgs::msg::FootStateArray msg_;
+
   std::shared_ptr<rclcpp::Publisher<spot_msgs::msg::FootStateArray>> foot_state_publisher_;
   std::shared_ptr<realtime_tools::RealtimePublisher<spot_msgs::msg::FootStateArray>> realtime_foot_state_publisher_;
 };

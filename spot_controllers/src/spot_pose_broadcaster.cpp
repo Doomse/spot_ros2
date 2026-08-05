@@ -110,27 +110,27 @@ controller_interface::CallbackReturn SpotPoseBroadcaster::on_configure(
   }
 
   // Initialize pose messages
-  vision_realtime_publisher_->lock();
-  vision_realtime_publisher_->msg_.header.frame_id = frame_prefix_ + params_.vision_frame_name;
-  vision_realtime_publisher_->unlock();
-  odom_realtime_publisher_->lock();
-  odom_realtime_publisher_->msg_.header.frame_id = frame_prefix_ + params_.odom_frame_name;
-  odom_realtime_publisher_->unlock();
+  vision_msg_ = geometry_msgs::msg::PoseStamped();
+  vision_msg_.header.frame_id = frame_prefix_ + params_.vision_frame_name;
+  vision_realtime_publisher_->try_publish(vision_msg_);
+  odom_msg_ = geometry_msgs::msg::PoseStamped();
+  odom_msg_.header.frame_id = frame_prefix_ + params_.odom_frame_name;
+  odom_realtime_publisher_->try_publish(odom_msg_);
 
   // Initialize tf messages
-  realtime_tf_publisher_->lock();
-  realtime_tf_publisher_->msg_.transforms.resize(2);
+  tf_msg_ = tf2_msgs::msg::TFMessage();
+  tf_msg_.transforms.resize(2);
   // vision transform
-  auto& vision_tf_transform = realtime_tf_publisher_->msg_.transforms.at(0);
+  auto& vision_tf_transform = tf_msg_.transforms.at(0);
   // TF will be from body to vision to account for a valid TF tree
   vision_tf_transform.header.frame_id = frame_prefix_ + params_.body_frame_name;
   vision_tf_transform.child_frame_id = frame_prefix_ + params_.vision_frame_name;
   // odom transform
-  auto& odom_tf_transform = realtime_tf_publisher_->msg_.transforms.at(1);
+  auto& odom_tf_transform = tf_msg_.transforms.at(1);
   // TF will be from body to odom to account for a valid TF tree
   odom_tf_transform.header.frame_id = frame_prefix_ + params_.body_frame_name;
   odom_tf_transform.child_frame_id = frame_prefix_ + params_.odom_frame_name;
-  realtime_tf_publisher_->unlock();
+  realtime_tf_publisher_->try_publish(tf_msg_);
 
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -161,16 +161,14 @@ controller_interface::return_type SpotPoseBroadcaster::update(const rclcpp::Time
   vision_pose_sensor_->get_values_as_message(vision_t_body);
   odom_pose_sensor_->get_values_as_message(odom_t_body);
 
-  if (vision_realtime_publisher_->trylock()) {
-    vision_realtime_publisher_->msg_.header.stamp = time;
-    vision_realtime_publisher_->msg_.pose = vision_t_body;
-    vision_realtime_publisher_->unlockAndPublish();
-  }
-  if (odom_realtime_publisher_->trylock()) {
-    odom_realtime_publisher_->msg_.header.stamp = time;
-    odom_realtime_publisher_->msg_.pose = odom_t_body;
-    odom_realtime_publisher_->unlockAndPublish();
-  }
+  vision_msg_.header.stamp = time;
+  vision_msg_.pose = vision_t_body;
+  vision_realtime_publisher_->try_publish(vision_msg_);
+
+  odom_msg_.header.stamp = time;
+  odom_msg_.pose = odom_t_body;
+  odom_realtime_publisher_->try_publish(odom_msg_);
+
   // invalid poses should not get published to TF
   if (!is_pose_valid(vision_t_body)) {
     RCLCPP_ERROR_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000, "Invalid vision_t_body!");
@@ -178,7 +176,7 @@ controller_interface::return_type SpotPoseBroadcaster::update(const rclcpp::Time
   } else if (!is_pose_valid(odom_t_body)) {
     RCLCPP_ERROR_THROTTLE(get_node()->get_logger(), *get_node()->get_clock(), 1000, "Invalid odom_t_body!");
     log_pose(odom_t_body);
-  } else if (realtime_tf_publisher_->trylock()) {
+  } else {
     // Pose is valid, publish it to TF
     const std::vector<geometry_msgs::msg::Pose> poses = {vision_t_body, odom_t_body};
     for (size_t i = 0; i < poses.size(); i++) {
@@ -190,11 +188,11 @@ controller_interface::return_type SpotPoseBroadcaster::update(const rclcpp::Time
       // convert this to a tf2 transform
       geometry_msgs::msg::Transform tf_msg;
       tf2::toMsg(tf, tf_msg);
-      auto& tf_transform = realtime_tf_publisher_->msg_.transforms.at(i);
+      auto& tf_transform = tf_msg_.transforms.at(i);
       tf_transform.header.stamp = time;
       tf_transform.transform = tf_msg;
     }
-    realtime_tf_publisher_->unlockAndPublish();
+    realtime_tf_publisher_->try_publish(tf_msg_);
   }
 
   return controller_interface::return_type::OK;

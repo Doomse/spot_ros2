@@ -13,22 +13,18 @@ endif()
 
 # Dependencies
 find_package(ament_cmake REQUIRED)
-set(THIS_PACKAGE_INCLUDE_DEPENDS
-  controller_interface
-  forward_command_controller
-  imu_sensor_broadcaster
-  pluginlib
-  rclcpp
-  rclcpp_lifecycle
-  spot_msgs
-  tf2_geometry_msgs
-  tf2_msgs
-  tf2
-  geometry_msgs
-)
-foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
-  find_package(${Dependency} REQUIRED)
-endforeach()
+
+find_package(controller_interface REQUIRED)
+find_package(forward_command_controller REQUIRED)
+find_package(imu_sensor_broadcaster REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
+find_package(spot_msgs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 generate_parameter_library(
   forward_state_controller_parameters
@@ -81,9 +77,22 @@ target_link_libraries(
   forward_command_controller::forward_command_controller
   imu_sensor_broadcaster::imu_sensor_broadcaster
 )
-ament_target_dependencies(
-  spot_controllers PUBLIC
-  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+
+target_link_libraries(spot_controllers PUBLIC
+  ${geometry_msgs_TARGETS}
+  ${spot_msgs_TARGETS}
+  ${tf2_msgs_TARGETS}
+  controller_interface::controller_interface
+  forward_command_controller::forward_command_controller
+  forward_command_controller::forward_command_controller_parameters
+  forward_command_controller::multi_interface_forward_command_controller_parameters
+  imu_sensor_broadcaster::imu_sensor_broadcaster
+  imu_sensor_broadcaster::imu_sensor_broadcaster_parameters
+  pluginlib::pluginlib
+  rclcpp::rclcpp
+  rclcpp_lifecycle::rclcpp_lifecycle
+  tf2::tf2
+  tf2_geometry_msgs::tf2_geometry_msgs
 )
 
 # Causes the visibility macros to use dllexport rather than dllimport,

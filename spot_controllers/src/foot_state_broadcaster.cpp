@@ -95,13 +95,13 @@ controller_interface::CallbackReturn FootStateBroadcaster::on_configure(
 controller_interface::CallbackReturn FootStateBroadcaster::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   // initialize foot state message
-  auto& feet_state_msg = realtime_foot_state_publisher_->msg_;
-  feet_state_msg.states.clear();
+  msg_ = spot_msgs::msg::FootStateArray();
+  msg_.states.clear();
   // update foot state message
   for (size_t i = 0; i < 4; ++i) {
     spot_msgs::msg::FootState foot_state;
     foot_state.contact = spot_msgs::msg::FootState::CONTACT_UNKNOWN;
-    feet_state_msg.states.push_back(foot_state);
+    msg_.states.push_back(foot_state);
   }
 
   return CallbackReturn::SUCCESS;
@@ -114,19 +114,17 @@ controller_interface::CallbackReturn FootStateBroadcaster::on_deactivate(
 
 controller_interface::return_type FootStateBroadcaster::update(const rclcpp::Time& /*time*/,
                                                                const rclcpp::Duration& /*period*/) {
-  if (realtime_foot_state_publisher_ && realtime_foot_state_publisher_->trylock()) {
-    auto& feet_state_msg = realtime_foot_state_publisher_->msg_;
+  if (realtime_foot_state_publisher_) {
     // update foot state message
     for (size_t i = 0; i < 4; ++i) {
       // this follows the same order as the state_interface_configuration
       // 0 = Front Left, 1 = Front Right, 2 = Back Left, 3 = Back Right
       const auto& state_interface = state_interfaces_.at(i);
-      const std::string interface_name = state_interface.get_interface_name();
-      const auto interface_value = state_interface.get_value();
-      uint8_t contact = std::isnan(interface_value) ? spot_msgs::msg::FootState::CONTACT_UNKNOWN : interface_value;
-      feet_state_msg.states.at(i).contact = contact;
+      const auto interface_optional = state_interface.get_optional();
+      uint8_t contact = interface_optional ? interface_optional.value() : spot_msgs::msg::FootState::CONTACT_UNKNOWN;
+      msg_.states.at(i).contact = contact;
     }
-    realtime_foot_state_publisher_->unlockAndPublish();
+    realtime_foot_state_publisher_->try_publish(msg_);
   }
 
   return controller_interface::return_type::OK;

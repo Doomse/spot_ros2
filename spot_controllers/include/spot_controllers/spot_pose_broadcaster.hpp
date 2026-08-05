@@ -64,6 +64,10 @@ class SpotPoseBroadcaster : public controller_interface::ControllerInterface {
 
   std::string frame_prefix_;
 
+  geometry_msgs::msg::PoseStamped vision_msg_;
+  geometry_msgs::msg::PoseStamped odom_msg_;
+  tf2_msgs::msg::TFMessage tf_msg_;
+
   std::unique_ptr<semantic_components::PoseSensor> vision_pose_sensor_;
   std::unique_ptr<semantic_components::PoseSensor> odom_pose_sensor_;
 
