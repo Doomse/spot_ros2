@@ -17,11 +17,11 @@ Copyright (c) 2024 Robotics and AI Institute LLC dba RAI Institute. All rights r
   <depend>bosdyn_api_msgs</depend>
   <depend>bosdyn_cmake_module</depend>
   <depend>hardware_interface</depend>
+  <depend>libexpected-dev</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>spot_msgs</depend>
-  <depend>tl_expected</depend>
 
   <exec_depend>spot_description</exec_depend>
   <exec_depend>xacro</exec_depend>
