@@ -39,8 +39,8 @@ target_include_directories(spot_hardware_interface PUBLIC
 )
 target_link_libraries(spot_hardware_interface PUBLIC 
   bosdyn::bosdyn_client
-  ${bosdyn_api_msgs_TARGETS}
-  ${spot_msgs_TARGETS}
+  bosdyn_api_msgs::bosdyn_api_msgs
+  spot_msgs::spot_msgs
   bondcpp::bondcpp
   bosdyn_api_msgs::bosdyn_api_msgs_conversions
   hardware_interface::hardware_interface

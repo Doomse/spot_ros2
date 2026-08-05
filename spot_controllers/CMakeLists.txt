@@ -74,14 +74,10 @@ target_link_libraries(
   foot_state_broadcaster_parameters
   spot_pose_broadcaster_parameters
   spot_imu_broadcaster_parameters
-  forward_command_controller::forward_command_controller
-  imu_sensor_broadcaster::imu_sensor_broadcaster
-)
 
-target_link_libraries(spot_controllers PUBLIC
-  ${geometry_msgs_TARGETS}
-  ${spot_msgs_TARGETS}
-  ${tf2_msgs_TARGETS}
+  geometry_msgs::geometry_msgs
+  spot_msgs::spot_msgs
+  tf2_msgs::tf2_msgs
   controller_interface::controller_interface
   forward_command_controller::forward_command_controller
   forward_command_controller::forward_command_controller_parameters
