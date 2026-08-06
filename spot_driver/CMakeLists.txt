@@ -91,13 +91,35 @@ add_library(spot_api
 target_include_directories(spot_api PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
+  ${OpenCV_INCLUDE_DIRS}
 )
 
-target_link_libraries(spot_api PUBLIC bosdyn::bosdyn_client)
+target_link_libraries(spot_api PUBLIC
+  bondcpp::bondcpp
+  bosdyn::bosdyn_client
+  bosdyn_api_msgs::bosdyn_api_msgs
+  bosdyn_api_msgs::bosdyn_api_msgs_conversions
+  bosdyn_spot_api_msgs::bosdyn_spot_api_msgs
+  bosdyn_spot_api_msgs::bosdyn_spot_api_msgs_conversions
+  cv_bridge::cv_bridge
+  geometry_msgs::geometry_msgs
+  image_transport::image_transport
+  message_filters::message_filters
+  nav_msgs::nav_msgs
+  rclcpp::rclcpp
+  rclcpp_components::component
+  rclcpp_components::component_manager
+  sensor_msgs::sensor_msgs
+  sensor_msgs::sensor_msgs_library
+  spot_msgs::spot_msgs
+  std_srvs::std_srvs
+  tf2::tf2
+  tf2_eigen::tf2_eigen
+  tf2_ros::static_transform_broadcaster_node
+  tf2_ros::tf2_ros
+  ${OpenCV_LIBS}
+)
 set_property(TARGET spot_api PROPERTY POSITION_INDEPENDENT_CODE ON)
-
-include(/home/robot/ament_target_dependencies.cmake)
-ament_target_dependencies(spot_api PUBLIC ${THIS_PACKAGE_INCLUDE_ROS_DEPENDS})
 
 ###
 # Spot image publisher
@@ -146,8 +168,11 @@ target_include_directories(state_publisher_component
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(state_publisher_component PUBLIC spot_api)
-ament_target_dependencies(state_publisher_component PUBLIC rclcpp_components)
+target_link_libraries(state_publisher_component PUBLIC 
+  rclcpp_components::component
+  rclcpp_components::component_manager
+  spot_api
+)
 
 rclcpp_components_register_node(
   state_publisher_component
@@ -174,8 +199,11 @@ target_include_directories(lease_manager_component
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(lease_manager_component PUBLIC spot_api)
-ament_target_dependencies(lease_manager_component PUBLIC rclcpp_components)
+target_link_libraries(lease_manager_component PUBLIC 
+  rclcpp_components::component
+  rclcpp_components::component_manager
+  spot_api
+)
 
 rclcpp_components_register_node(
   lease_manager_component
@@ -228,10 +256,34 @@ target_include_directories(image_stitcher
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
+    ${OpenCV_INCLUDE_DIRS}
 )
-target_link_libraries(image_stitcher PUBLIC spot_api)
+target_link_libraries(image_stitcher PUBLIC 
+  spot_api
+  bondcpp::bondcpp
+  bosdyn_api_msgs::bosdyn_api_msgs
+  bosdyn_api_msgs::bosdyn_api_msgs_conversions
+  bosdyn_spot_api_msgs::bosdyn_spot_api_msgs
+  bosdyn_spot_api_msgs::bosdyn_spot_api_msgs_conversions
+  cv_bridge::cv_bridge
+  geometry_msgs::geometry_msgs
+  image_transport::image_transport
+  message_filters::message_filters
+  nav_msgs::nav_msgs
+  rclcpp::rclcpp
+  rclcpp_components::component
+  rclcpp_components::component_manager
+  sensor_msgs::sensor_msgs
+  sensor_msgs::sensor_msgs_library
+  spot_msgs::spot_msgs
+  std_srvs::std_srvs
+  tf2::tf2
+  tf2_eigen::tf2_eigen
+  tf2_ros::static_transform_broadcaster_node
+  tf2_ros::tf2_ros
+  ${OpenCV_LIBS}
+)
 set_property(TARGET image_stitcher PROPERTY POSITION_INDEPENDENT_CODE ON)
-ament_target_dependencies(image_stitcher PUBLIC ${THIS_PACKAGE_INCLUDE_ROS_DEPENDS})
   
 add_executable(image_stitcher_node src/image_stitcher/image_stitcher_node_main.cpp)
 target_include_directories(image_stitcher_node
