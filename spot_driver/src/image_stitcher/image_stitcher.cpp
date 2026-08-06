@@ -7,7 +7,7 @@
 #include <opencv2/core/types.hpp>
 #include <spot_driver/image_stitcher/image_stitcher.hpp>
 
-#include <message_filters/time_synchronizer.h>
+#include <message_filters/time_synchronizer.hpp>
 #include <opencv2/core/hal/interface.h>
 
 #include <opencv2/core/mat.hpp>
@@ -191,9 +191,9 @@ namespace spot_ros2 {
 RclcppCameraSynchronizer::RclcppCameraSynchronizer(const std::shared_ptr<rclcpp::Node>& node) {
   // These topics are remapped onto the actual Spot camera topics in the launch file
   subscriber_image1_.subscribe(node.get(), "left/image", "raw");
-  subscriber_info1_.subscribe(node, "left/camera_info");
+  subscriber_info1_.subscribe(node, "left/camera_info", rclcpp::QoS(10));
   subscriber_image2_.subscribe(node.get(), "right/image", "raw");
-  subscriber_info2_.subscribe(node, "right/camera_info");
+  subscriber_info2_.subscribe(node, "right/camera_info", rclcpp::QoS(10));
 
   sync_ = std::make_unique<Synchronizer>(ApproximateTimePolicy(kHistoryDepth), subscriber_image1_, subscriber_info1_,
                                          subscriber_image2_, subscriber_info2_);

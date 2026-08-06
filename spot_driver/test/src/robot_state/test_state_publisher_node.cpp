@@ -17,7 +17,7 @@
 #include <spot_driver/mock/mock_time_sync_api.hpp>
 #include <spot_driver/mock/mock_timer_interface.hpp>
 #include <spot_driver/robot_state/state_publisher_node.hpp>
-#include <tl_expected/expected.hpp>
+#include <tl/expected.hpp>
 
 namespace {
 using ::testing::_;

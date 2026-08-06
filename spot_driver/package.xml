@@ -20,6 +20,7 @@
   <depend>depth_image_proc</depend>
   <depend>geometry_msgs</depend>
   <depend>image_transport</depend>
+  <depend>libexpected-dev</depend>
   <depend>libopencv-dev</depend>
   <depend>message_filters</depend>
   <depend>nav_msgs</depend>
@@ -31,7 +32,6 @@
   <depend>spot_msgs</depend>
   <depend>tf2_eigen</depend>
   <depend>tf2_ros</depend>
-  <depend>tl_expected</depend>
 
   <exec_depend>bondpy</exec_depend>
   <exec_depend>synchros2</exec_depend>

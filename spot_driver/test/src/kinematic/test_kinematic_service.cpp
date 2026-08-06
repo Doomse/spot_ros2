@@ -9,7 +9,7 @@
 #include <spot_driver/mock/mock_kinematic_api.hpp>
 #include <spot_driver/mock/mock_logger_interface.hpp>
 
-#include <tl_expected/expected.hpp>
+#include <tl/expected.hpp>
 
 namespace spot_ros2::kinematic::test {
 

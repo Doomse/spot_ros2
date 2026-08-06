@@ -27,9 +27,9 @@ set(THIS_PACKAGE_INCLUDE_ROS_DEPENDS
   rclcpp
   rclcpp_components
   sensor_msgs
+  tf2
   tf2_eigen
   tf2_ros
-  tl_expected
   spot_msgs
   std_srvs
   nav_msgs
@@ -95,6 +95,8 @@ target_include_directories(spot_api PUBLIC
 
 target_link_libraries(spot_api PUBLIC bosdyn::bosdyn_client)
 set_property(TARGET spot_api PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+include(/home/robot/ament_target_dependencies.cmake)
 ament_target_dependencies(spot_api PUBLIC ${THIS_PACKAGE_INCLUDE_ROS_DEPENDS})
 
 ###
