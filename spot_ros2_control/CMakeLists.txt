@@ -35,11 +35,14 @@ target_include_directories(spot_ros2_control PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-ament_target_dependencies(
-  spot_ros2_control PUBLIC
-  ${THIS_PACKAGE_INCLUDE_DEPENDS}
-)
 
+target_link_libraries(spot_ros2_control PUBLIC
+  rclcpp::rclcpp
+  rclcpp_lifecycle::rclcpp_lifecycle
+  sensor_msgs::sensor_msgs
+  std_msgs::std_msgs
+  spot_hardware_interface::spot_hardware_interface
+)
 
 # Add example nodes and install them
 add_executable(noarm_squat examples/noarm_squat.cpp)

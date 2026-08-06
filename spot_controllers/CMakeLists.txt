@@ -14,17 +14,22 @@ endif()
 # Dependencies
 find_package(ament_cmake REQUIRED)
 
-find_package(controller_interface REQUIRED)
-find_package(forward_command_controller REQUIRED)
-find_package(imu_sensor_broadcaster REQUIRED)
-find_package(pluginlib REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
-find_package(spot_msgs REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
-find_package(tf2_msgs REQUIRED)
-find_package(tf2 REQUIRED)
-find_package(geometry_msgs REQUIRED)
+set(THIS_PACKAGE_INCLUDE_DEPENDS
+  controller_interface
+  forward_command_controller
+  imu_sensor_broadcaster
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
+  spot_msgs
+  tf2_geometry_msgs
+  tf2_msgs
+  tf2
+  geometry_msgs
+)
+foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
+  find_package(${Dependency} REQUIRED)
+endforeach()
 
 generate_parameter_library(
   forward_state_controller_parameters

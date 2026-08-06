@@ -14,14 +14,19 @@ endif()
 # Dependencies
 find_package(ament_cmake REQUIRED)
 
-find_package(bondcpp REQUIRED)
-find_package(hardware_interface REQUIRED)
-find_package(bosdyn_api_msgs REQUIRED)
-find_package(bosdyn_cmake_module REQUIRED)
-find_package(pluginlib REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
-find_package(spot_msgs REQUIRED)
+set(THIS_PACKAGE_INCLUDE_DEPENDS
+  bondcpp
+  hardware_interface
+  bosdyn_api_msgs
+  bosdyn_cmake_module
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
+  spot_msgs
+)
+foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
+  find_package(${Dependency} REQUIRED)
+endforeach()
 
 find_package(bosdyn REQUIRED)
 
