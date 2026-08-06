@@ -9,11 +9,11 @@ find_package(pluginlib REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(spot_msgs REQUIRED)
 find_package(rviz_common REQUIRED)
-find_package(Qt5UiTools)
+find_package(Qt6 COMPONENTS UiTools REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 
-qt5_wrap_cpp(MOC_FILES "include/spot_rviz_plugins/spot_panel.hpp")
+qt6_wrap_cpp(MOC_FILES "include/spot_rviz_plugins/spot_panel.hpp")
 
 add_library(
   spot_rviz_plugins
@@ -28,7 +28,15 @@ target_include_directories(spot_rviz_plugins PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
-ament_target_dependencies(spot_rviz_plugins PUBLIC pluginlib rclcpp std_msgs rviz_common std_srvs spot_msgs Qt5UiTools)
+target_link_libraries(spot_rviz_plugins PUBLIC 
+  Qt6::UiTools
+  pluginlib::pluginlib
+  rclcpp::rclcpp
+  rviz_common::rviz_common
+  spot_msgs::spot_msgs
+  std_msgs::std_msgs
+  std_srvs::std_srvs
+)
 
 install(
   TARGETS spot_rviz_plugins

@@ -9,11 +9,11 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>libexpected-dev</depend>
   <depend>rclcpp</depend>
   <depend>pluginlib</depend>
   <depend>spot_msgs</depend>
   <depend>std_srvs</depend>
-  <depend>tl_expected</depend>
 
   <exec_depend>rviz2</exec_depend>
 
