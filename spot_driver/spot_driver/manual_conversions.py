@@ -10,7 +10,6 @@ from builtin_interfaces.msg import Time
 from geometry_msgs.msg import (
     Point,
     Pose,
-    Pose2D,  # Note: Pose2D is deprecated
     PoseStamped,
     Quaternion,
     Transform,
@@ -40,10 +39,6 @@ def ros_pose_to_se3_pose(pose: Pose) -> SE3Pose:
         pose.position.z,
         Quat(pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z),
     )
-
-
-def se2_pose_to_ros_pose2(se2_pose: SE2Pose) -> Pose2D:
-    return Pose2D(x=se2_pose.x, y=se2_pose.y, theta=se2_pose.angle)
 
 
 def se3_pose_to_ros_pose(se3_pose: SE3Pose) -> Pose:
