@@ -3260,6 +3260,13 @@ class SpotROS(Node):
                     )
                     mobility_params_msg.locomotion_hint = mobility_params.locomotion_hint
                     mobility_params_msg.stairs_mode = mobility_params.stairs_mode
+                    # Transfer all field values for obstacle params
+                    for field_name, _ in ObstacleParams.get_fields_and_field_types():
+                        setattr(
+                            mobility_params_msg.obstacle_params,
+                            field_name,
+                            getattr(mobility_params.obstacle_params, field_name)
+                        )
                 except Exception as e:
                     self.get_logger().error("Error:{}".format(e))
                     pass

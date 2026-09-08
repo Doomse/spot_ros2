@@ -1,3 +1,4 @@
 geometry_msgs/Pose body_control
 uint32 locomotion_hint
 uint32 stairs_mode
+bosdyn_spot_api_msgs/ObstacleParams obstacle_params
