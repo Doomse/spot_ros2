@@ -108,6 +108,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/SetStandHeight.srv"
   "srv/SetStairsMode.srv"
   "srv/MutateWorldObject.srv"
+  "srv/SetObstacleParams.srv"
   "action/ArmSurfaceContact.action"
   "action/ExecuteDance.action"
   "action/NavigateTo.action"

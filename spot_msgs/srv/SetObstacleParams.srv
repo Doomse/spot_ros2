@@ -1,0 +1,4 @@
+bosdyn_spot_api_msgs/ObstacleParams obstacle_params
+---
+bool success
+string message

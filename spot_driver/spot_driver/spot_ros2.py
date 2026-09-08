@@ -56,6 +56,7 @@ from bosdyn_msgs.msg import (
     ManipulationApiFeedbackResponse,
     MobilityCommandFeedback,
     MobilityParamsStairsMode,
+    ObstacleParams,
     PtzDescription,
     RobotCommand,
     RobotCommandFeedback,
@@ -134,6 +135,7 @@ from spot_msgs.srv import (  # type: ignore
     SetGripperCameraParameters,
     SetLEDBrightness,
     SetLocomotion,
+    SetObstacleParams,
     SetPtzPosition,
     SetStairsMode,
     SetStandHeight,
@@ -1925,6 +1927,32 @@ class SpotROS(Node):
             response.message = "Error:{}".format(e)
             return response
 
+    def handle_set_obstacle_params(
+        self, request: SetObstacleParams.Request, response: SetObstacleParams.Response
+    ) -> SetObstacleParams.Response:
+        """ROS Service handler to set obstacle params"""
+        if self.spot_wrapper is None:
+            response.success = False
+            response.message = "Spot wrapper is undefined"
+            return response
+        try:
+            if request.obstacle_params.obstacle_avoidance_padding < 0:
+                raise ValueError("Obstacle avoidance padding has to be non-negative.")
+            mobility_params = self.spot_wrapper.get_mobility_params()
+            # Transfer all field values from request to protobuf
+            for field_name, _ in ObstacleParams.get_fields_and_field_types():
+                setattr(
+                    mobility_params.obstacle_params,
+                    field_name,
+                    getattr(request.obstacle_params, field_name)
+                )
+            self.spot_wrapper.set_mobility_params(mobility_params)
+        except Exception as e:
+            response.success = False
+            response.message = f"Error: {e}"
+            return response
+        return response
+
     def handle_dock(self, request: Dock.Request, response: Dock.Response) -> Dock.Response:
         """ROS service handler to dock the robot."""
         if self.spot_wrapper is None:
@@ -2723,7 +2751,7 @@ class SpotROS(Node):
             self.get_logger().info(f"Mock mode, received command vel {data}")
             return
         self.spot_wrapper.velocity_cmd(
-            v_x=data.linear.x, v_y=data.linear.y, v_rot=data.angular.z, cmd_duration=self.cmd_duration
+            v_x=data.linear.x, v_y=data.linear.y, v_rot=data.angular.z, cmd_duration=self.cmd_duration, use_obstacle_params=True
         )
 
     def body_pose_callback(self, data: Pose) -> None:
