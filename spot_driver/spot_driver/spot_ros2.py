@@ -2603,11 +2603,13 @@ class SpotROS(Node):
         """ROS actionserver execution handler to handle receiving a request to move to a location"""
         result: Optional[Trajectory.Result] = None
 
-        if goal_handle.request.target_pose.header.frame_id != "body":
+        frame_no_prefix = goal_handle.request.target_pose.header.frame_id.removeprefix(self.frame_prefix)
+
+        if frame_no_prefix not in ["odom", "vision"]:
             goal_handle.abort()
             result = Trajectory.Result()
             result.success = False
-            result.message = "frame_id of target_pose must be 'body'"
+            result.message = f"frame_id of target_pose must be '{self.frame_prefix}.odom' or '{self.frame_prefix}.vision'"
             return result
 
         if goal_handle.request.duration.sec <= 0:
@@ -2636,6 +2638,7 @@ class SpotROS(Node):
                 z=goal_handle.request.target_pose.pose.orientation.z,
             ).to_yaw(),
             cmd_duration=cmd_duration_secs,
+            frame_name=frame_no_prefix,
             precise_position=goal_handle.request.precise_positioning,
             disable_vision_body_obstacle_avoidance=goal_handle.request.disable_obstacle_avoidance,
         )
