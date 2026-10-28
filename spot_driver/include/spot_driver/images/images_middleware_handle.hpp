@@ -42,6 +42,11 @@ class ImagesMiddlewareHandle : public SpotImagePublisher::MiddlewareHandle {
   void createPublishers(const std::set<ImageSource>& image_sources, bool uncompress_images,
                         bool publish_compressed_images) override;
 
+  rclcpp::QoS makePublisherQoS(size_t const publisherHistoryDepth) const {
+    // Images should be published as volatile & best_effort to reduce overhead
+    return rclcpp::QoS(publisherHistoryDepth).durability_volatile().best_effort();
+  }
+
   /**
    * @brief Publishes (compressed) images and camera info messages to ROS 2 topics.
    * @param images Map of image sources to image and camera info data.
