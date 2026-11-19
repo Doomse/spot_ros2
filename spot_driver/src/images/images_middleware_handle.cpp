@@ -43,7 +43,7 @@ void ImagesMiddlewareHandle::createPublishers(const std::set<ImageSource>& image
     }
     info_publishers_.try_emplace(image_topic_name,
                                  node_->create_publisher<sensor_msgs::msg::CameraInfo>(
-                                     image_topic_name + "/camera_info", makePublisherQoS(kPublisherHistoryDepth)));
+                                     image_topic_name + "/camera_info", makePublisherQoS(kPublisherHistoryDepth).reliable()));
   }
 }
 
